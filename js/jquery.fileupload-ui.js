@@ -178,6 +178,11 @@
                         var file = files[index] ||
                                 {error: 'Empty file upload result'};
                         deferred = that._addFinishedDeferreds();
+
+                        // 업로드완료시 업로드 돔을 다운로드 돔으로 대체한다.
+                        // 클래스 변경은
+                        // - 업로드돔 fade in -> 업로드돔 fade -> 다운로드돔 fade -> 다운로드돔 fade in
+                        /*
                         that._transition($(this)).done(
                             function () {
                                 var node = $(this);
@@ -194,6 +199,20 @@
                                 );
                             }
                         );
+                        */
+
+                        // 업로드돔을 다운로드돔으로 대체하는 위의 코드를 업로드돔 수정하는 형태로 변경
+                        var node = $(this);
+                        node.find('.progress').remove();
+
+                        var btn = '<button class="btn btn-danger delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i><span>Delete</span></button>';
+                        node.find('.cancel').after(btn).remove();
+
+                        data.context = $(this);
+                        that._trigger('completed', e, data);
+                        that._trigger('finished', e, data);
+                        deferred.resolve();
+
                     });
                 } else {
                     template = that._renderDownload(files)[
