@@ -243,9 +243,16 @@
                     data.context.each(function (index) {
                         if (data.errorThrown !== 'abort') {
                             var file = data.files[index];
-                            file.error = file.error || data.errorThrown ||
+                            // 오류메세지는 업로드 방삭에 따라 다른 곳에 들어 있다.
+                            // xhr 업로드인 경우
+                            // - data.errorThrown 은 'status code 422' 등 구체적인 오류메시지가 들어 있지 않고, data.jqXHR.responseJSON에 오류 객체가 들어있다.
+                            // iframe transport인 경우
+                            // - data.errorThrown에 들어 있다.
+                            file.error = file.error || (data.jqXHR.responseJSON && data.jqXHR.responseJSON[Object.keys(data.jqXHR.responseJSON)[0]][0]) || data.errorThrown ||
                                 data.i18n('unknownError');
                             deferred = that._addFinishedDeferreds();
+
+                            /*
                             that._transition($(this)).done(
                                 function () {
                                     var node = $(this);
@@ -262,6 +269,18 @@
                                     );
                                 }
                             );
+                            */
+
+                            var node = $(this);
+                            node.find('.progress').remove();
+                            node.find('.cancel').remove();
+                            node.find('.error').text(file.error);
+
+                            data.context = $(this);
+                            that._trigger('failed', e, data);
+                            that._trigger('finished', e, data);
+                            deferred.resolve();
+
                         } else {
                             deferred = that._addFinishedDeferreds();
                             that._transition($(this)).done(
