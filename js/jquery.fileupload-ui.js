@@ -130,6 +130,8 @@
                             var error = data.files[index].error;
                             if (error) {
                                 $(this).find('.error').text(error);
+                                $(this).find('.progress').remove();
+                                $(this).find('.cancel').remove();
                             }
                         });
                     }
