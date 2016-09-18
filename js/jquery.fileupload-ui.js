@@ -162,6 +162,7 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
+                console.log('fileupload-ui done');
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
@@ -231,6 +232,7 @@
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {
+                console.log('fileupload-ui fail');
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
@@ -404,6 +406,7 @@
             },
             // Callback for file deletion:
             destroy: function (e, data) {
+                console.log('fileupload-ui destroy');
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
