@@ -79,26 +79,56 @@
                         iframe
                             .unbind('load')
                             .bind('load', function () {
-                                var response;
-                                // Wrap in a try/catch block to catch exceptions thrown
-                                // when trying to access cross-domain iframe contents:
-                                try {
-                                    response = iframe.contents();
-                                    // Google Chrome and Firefox do not throw an
-                                    // exception when calling iframe.contents() on
-                                    // cross-domain requests, so we unify the response:
-                                    if (!response.length || !response[0].firstChild) {
-                                        throw new Error();
+                                // https://cmlenz.github.io/jquery-iframe-transport/
+                                var doc = this.contentWindow ? this.contentWindow.document :
+                                        (this.contentDocument ? this.contentDocument : this.document),
+                                    root = doc.documentElement ? doc.documentElement : doc.body,
+                                    textarea = root.getElementsByTagName("textarea")[0],
+                                    type = textarea && textarea.getAttribute("data-type") || null,
+                                    status = textarea && textarea.getAttribute("data-status") || 200,
+                                    statusText = textarea && textarea.getAttribute("data-statusText") || "success",
+                                    content;
+
+                                // 오류를 지정하기 위해서 body 안에 textarea 태그를 두고 오류를 attribute에 지정한 경우
+                                if (textarea) {
+                                    content = {
+                                        html: root.innerHTML,
+                                        text: type ?
+                                            textarea.value :
+                                            root ? (root.textContent || root.innerText) : null
+                                    };
+                                } else {
+                                    // 기존 방식대로 body에 json string이 있는 경우
+                                    var response;
+                                    // Wrap in a try/catch block to catch exceptions thrown
+                                    // when trying to access cross-domain iframe contents:
+                                    try {
+                                        response = iframe.contents();
+                                        // Google Chrome and Firefox do not throw an
+                                        // exception when calling iframe.contents() on
+                                        // cross-domain requests, so we unify the response:
+                                        if (!response.length || !response[0].firstChild) {
+                                            throw new Error();
+                                        }
+                                    } catch (e) {
+                                        response = undefined;
                                     }
-                                } catch (e) {
-                                    response = undefined;
+
+                                    content = {'iframe': response};
                                 }
+
                                 // The complete callback returns the
                                 // iframe content document as response object:
+                                // completeCallback은 jquery의 done() 함수이다
+                                // jquery는 status를 보고 오류 여부(203~300 오류 아님)를 판단하고 오류인 경우는 statusText를 오류 메시지로,
+                                // content는 사용하지 않는다.
                                 completeCallback(
-                                    200,
-                                    'success',
-                                    {'iframe': response}
+                                    status,
+                                    statusText,
+                                    content,
+                                    type ?
+                                        ("Content-Type: " + type) :
+                                        null
                                 );
                                 // Fix for IE endless progress bar activity bug
                                 // (happens on form submits to iframe targets):
