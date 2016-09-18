@@ -77,8 +77,7 @@
             // Function returning the current number of files,
             // used by the maxNumberOfFiles validation:
             getNumberOfFiles: function () {
-                return this.filesContainer.children()
-                    .not('.processing').length;
+                return this.filesContainer.find('.delete').length;
             },
 
             // Callback to retrieve the list of files from the server response:
