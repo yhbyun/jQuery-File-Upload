@@ -581,7 +581,7 @@
             e.preventDefault();
             var button = $(e.currentTarget);
             this._trigger('destroy', e, $.extend({
-                context: button.closest('.template-download'),
+                context: button.closest('.template-upload,.template-download'),
                 type: 'DELETE'
             }, button.data()));
         },
