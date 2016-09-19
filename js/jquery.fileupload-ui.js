@@ -102,9 +102,13 @@
                 data.context = that._renderUpload(data.files)
                     .data('data', data)
                     .addClass('processing');
-                options.filesContainer[
-                    options.prependFiles ? 'prepend' : 'append'
-                ](data.context);
+                if (options.prependFiles === 'replace') {
+                    options.filesContainer.html(data.context);
+                } else {
+                    options.filesContainer[
+                        options.prependFiles ? 'prepend' : 'append'
+                    ](data.context);
+                }
                 that._forceReflow(data.context);
                 that._transition(data.context);
                 data.process(function () {
