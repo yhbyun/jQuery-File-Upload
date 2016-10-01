@@ -135,6 +135,8 @@
                                 $(this).find('.error').text(error);
                                 $(this).find('.progress').remove();
                                 $(this).find('.cancel').remove();
+                                // fade out error notice
+                                $(this).delay(3000).fadeOut(350);
                             }
                         });
                         that._trigger('failed', e, data);
@@ -281,6 +283,8 @@
                             node.find('.progress').remove();
                             node.find('.cancel').remove();
                             node.find('.error').text(file.error);
+                            // fade out error notice
+                            node.delay(3000).fadeOut(350);
 
                             data.context = $(this);
                             that._trigger('failed', e, data);
