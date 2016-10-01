@@ -137,6 +137,7 @@
                                 $(this).find('.cancel').remove();
                             }
                         });
+                        that._trigger('failed', e, data);
                     }
                 });
             },
