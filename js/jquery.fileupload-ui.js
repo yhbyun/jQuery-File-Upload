@@ -212,7 +212,7 @@
                         var node = $(this);
                         node.find('.progress').remove();
 
-                        var btn = '<button class="btn btn-danger delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i><span>Delete</span></button>';
+                        var btn = '<button class="btn btn-danger delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button> <input type="hidden" name="file_ids[]" value="' + file.id + '"> <input type="hidden" name="file_types[]" value="tmp">';
                         node.find('.cancel').after(btn).remove();
 
                         data.context = $(this);
