@@ -102,6 +102,10 @@
                 data.context = that._renderUpload(data.files)
                     .data('data', data)
                     .addClass('processing');
+
+                // yhbyun 썸네일 데이타 생성 시작
+                data.context.find('.dz-preview').removeClass('dz-file-preview').addClass('dz-processing');
+
                 if (options.prependFiles === 'replace') {
                     options.filesContainer.html(data.context);
                 } else {
@@ -111,6 +115,8 @@
                 }
                 that._forceReflow(data.context);
                 that._transition(data.context);
+
+                // yhbyun 이미지 썸네일 데이타 생성등 업로드 전 프로세스 실행
                 data.process(function () {
                     return $this.fileupload('process', data);
                 }).always(function () {
@@ -118,10 +124,22 @@
                         $(this).find('.size').text(
                             that._formatFileSize(data.files[index].size)
                         );
+
+                        // yhbyun
+                        $(this).find('.dz-size').text(
+                            that._formatFileSize(data.files[index].size)
+                        );
                     }).removeClass('processing');
+
+                    // yhbun 썸네일 이미지 화면에 표시
                     that._renderPreviews(data);
                 }).done(function () {
                     data.context.find('.start').prop('disabled', false);
+
+                    // yhbyun 썸네일 데이타생성 완료
+                    // data.context는 $('<tr class="template-upload fade">')
+                    data.context.find('.dz-preview').addClass('dz-image-preview');
+
                     if ((that._trigger('added', e, data) !== false) &&
                             (options.autoUpload || data.autoUpload) &&
                             data.autoUpload !== false) {
@@ -132,6 +150,10 @@
                         data.context.each(function (index) {
                             var error = data.files[index].error;
                             if (error) {
+                                // yhbyun this는 <tr class="template-upload fade">
+                                $(this).find('.dz-error-message').text(error);
+                                $(this).find('.dz-preview').removeClass('dz-processing dz-image-preview').addClass('dz-file-preview dz-error dz-complete');
+
                                 $(this).find('.error').text(error);
                                 $(this).find('.progress').remove();
                                 $(this).find('.cancel').remove();
@@ -164,10 +186,14 @@
                             'width',
                             '100%'
                         );
+
+                    // yhbyun
+                    data.context.find('.dz-upload').css('width', '100%');
                 }
                 return that._trigger('sent', e, data);
             },
             // Callback for successful uploads:
+            // yhbyun : 파일업로드 완료
             done: function (e, data) {
                 console.log('fileupload-ui done');
                 if (e.isDefaultPrevented()) {
@@ -212,8 +238,15 @@
                         var node = $(this);
                         node.find('.progress').remove();
 
-                        var btn = '<button class="btn btn-danger delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button> <input type="hidden" name="file_ids[]" value="' + file.id + '"> <input type="hidden" name="file_types[]" value="tmp">';
+                        // yhbyun
+                        node.find('.dz-preview').addClass('dz-success');
+                        node.find('.dz-preview').addClass('dz-complete');
+
+                        var btn = '<button class="btn btn-box-tool delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button> <input type="hidden" name="file_ids[]" value="' + file.id + '"> <input type="hidden" name="file_types[]" value="tmp">';
                         node.find('.cancel').after(btn).remove();
+
+                        // yhbyun
+                        node.find('.dz-error-mark').after(btn);
 
                         data.context = $(this);
                         that._trigger('completed', e, data);
@@ -283,6 +316,11 @@
                             node.find('.progress').remove();
                             node.find('.cancel').remove();
                             node.find('.error').text(file.error);
+
+                            // yhbyun
+                            node.find('.dz-error-message').text(file.error);
+                            node.find('.dz-preview').removeClass('dz-processing dz-image-preview').addClass('dz-file-preview dz-error dz-complete');
+
                             // fade out error notice
                             node.delay(3000).fadeOut(350);
 
@@ -338,6 +376,9 @@
                                 'width',
                                 progress + '%'
                             );
+
+                        // yhbyun
+                        $(this).find('.dz-upload').css('width', progress + '%');
                     });
                 }
             },
@@ -397,6 +438,10 @@
                             .attr('aria-valuenow', '0')
                             .children().first().css('width', '0%');
                         $(this).find('.progress-extended').html('&nbsp;');
+
+                        // yhbyun
+                        $(this).find('.dz-upload').css('width', '0%');
+
                         deferred.resolve();
                     }
                 );
@@ -406,6 +451,8 @@
                     return false;
                 }
                 $(this).addClass('fileupload-processing');
+                // yhbyun: this는 <input type="file">
+                $(this).closest('.js-file-uploader').find('.dz-preview').addClass('dz-processing');
             },
             processstop: function (e) {
                 if (e.isDefaultPrevented()) {
@@ -543,8 +590,14 @@
             return $(this.options.templatesContainer).html(result).children();
         },
 
+        // 이미지 미리보기 canvas 태그를 추가한다.
         _renderPreviews: function (data) {
             data.context.find('.preview').each(function (index, elm) {
+                $(elm).append(data.files[index].preview);
+            });
+
+            // yhbyun
+            data.context.find('.dz-image').each(function (index, elm) {
                 $(elm).append(data.files[index].preview);
             });
         },
