@@ -242,7 +242,7 @@
                         node.find('.dz-preview').addClass('dz-success');
                         node.find('.dz-preview').addClass('dz-complete');
 
-                        var btn = '<button class="btn btn-box-tool delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button> <input type="hidden" name="file_ids[]" value="' + file.id + '"> <input type="hidden" name="file_types[]" value="tmp">';
+                        var btn = '<button class="btn btn-box-tool delete" data-type="' + file.deleteType +'" data-url="' + file.deleteUrl + '"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button> <input type="hidden" name="' + that.options.fileRequestPrefix + '_ids[]" value="' + file.id + '"> <input type="hidden" name="' + that.options.fileRequestPrefix + '_types[]" value="tmp">';
                         node.find('.cancel').after(btn).remove();
 
                         // yhbyun
