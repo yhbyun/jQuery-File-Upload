@@ -158,7 +158,7 @@
                                 $(this).find('.progress').remove();
                                 $(this).find('.cancel').remove();
                                 // fade out error notice
-                                $(this).delay(5000).fadeOut(350);
+                                $(this).delay(5000).fadeOut(350, function () { $(this).remove(); });
                             }
                         });
                         that._trigger('failed', e, data);
@@ -322,7 +322,7 @@
                             node.find('.dz-preview').removeClass('dz-processing dz-image-preview').addClass('dz-file-preview dz-error dz-complete');
 
                             // fade out error notice
-                            node.delay(5000).fadeOut(350);
+                            node.delay(5000).fadeOut(350, function () { $(this).remove(); });
 
                             data.context = $(this);
                             that._trigger('failed', e, data);
